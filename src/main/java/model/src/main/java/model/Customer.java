@@ -1,4 +1,4 @@
-package model;
+package model.src.main.java.model;
 
 
 /**

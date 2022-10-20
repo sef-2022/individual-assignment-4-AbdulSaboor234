@@ -1,4 +1,4 @@
-package model;
+package model.src.main.java.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,7 +47,7 @@ public class Service {
      * @param id:  Unique id of the service.
      * @param fID:  Franchise that offers the service.
      */
-    public Service(String name, int id,Franchise fID) {
+    public Service(String name, int id, Franchise fID) {
         this.name = name;
         this.id = id;
         this.fID = fID;

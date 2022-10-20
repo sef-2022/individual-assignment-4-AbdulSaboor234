@@ -1,15 +1,16 @@
-package model;
+package model.src.test.java.model;
 
+import model.src.main.java.model.Customer;
+import model.src.main.java.model.Franchise;
+import model.src.main.java.model.Service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *  Implement and test {Service.addCustomerToService } that respects the following:

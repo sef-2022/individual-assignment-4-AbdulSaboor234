@@ -106,7 +106,7 @@ public class Service {
 
         return lessthan500;
     }
-    public boolean checkServiceAmount(@NotNull Customer customer){
+    public boolean checkServiceAmount(Customer customer){
         boolean checkServiceUsed = customer.getNumberOfServices() >= 0 && customer.getNumberOfServices() <= 3;
         if(!checkServiceUsed){
             System.out.println("Incorrect amount of services used");
@@ -133,7 +133,6 @@ public class Service {
      * @param customer: who is requesting the service 
      * @return true if the customer is successfully enrolled, false otherwise
      */
-
 
     public boolean addCustomerToService(Customer customer, Franchise fID) {
         return checkFranchiselessthan500(fID) && checkServiceAmount(customer) && checkServiceUnique(customer);

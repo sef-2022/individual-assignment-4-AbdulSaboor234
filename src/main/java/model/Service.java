@@ -1,5 +1,7 @@
 package model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +55,9 @@ public class Service {
         this.fID = fID;
     }
 
+    public Service() {
+    }
+
     public String getName() {
         return name;
     }
@@ -89,21 +94,50 @@ public class Service {
         this.fID = fID;
     }
 
+    public boolean checkFranchiselessthan500(Franchise fID){
+        boolean lessthan500 = false;
+        for(Service service: fID.getServices()){
+            int amountOfCustomers = service.getCustomer().size();
+            if(amountOfCustomers>500){
+                System.out.println("Capacity full for the service");
+                lessthan500 = true;
+            }
+        }
+
+        return lessthan500;
+    }
+    public boolean checkServiceAmount(@NotNull Customer customer){
+        boolean checkServiceUsed = customer.getNumberOfServices() >= 0 && customer.getNumberOfServices() <= 3;
+        if(!checkServiceUsed){
+            System.out.println("Incorrect amount of services used");
+        }
+        return checkServiceUsed;
+    }
+
+    public  boolean checkServiceUnique(Customer customer){
+        boolean checkUnique = true;
+        try{
+            boolean noRepeatingServices = customer.getFranchise().getServices().stream().distinct().findAny().isPresent();
+            if(!noRepeatingServices){
+                checkUnique = false;
+                throw new Exception("service already existed");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return checkUnique;
+    }
+
     /**
      * Add a new customer to the service
      * @param customer: who is requesting the service 
      * @return true if the customer is successfully enrolled, false otherwise
      */
 
-    public boolean addCustomerToService(Customer customer, Franchise fID){
-        boolean checkServiceUsed = false;
-        if(customer.getNumberOfServices()>0 && customer.getNumberOfServices()>3){
-            checkServiceUsed = true;
-        }
-        return checkServiceUsed;
+
+    public boolean addCustomerToService(Customer customer, Franchise fID) {
+        return checkFranchiselessthan500(fID) && checkServiceAmount(customer) && checkServiceUnique(customer);
     }
-
-
 
 
 }

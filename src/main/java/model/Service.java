@@ -1,10 +1,10 @@
 package model;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Service offered by the franchise.
@@ -14,7 +14,7 @@ public class Service {
      * Name the service
      */
     private String name;
-    
+
     /**
      * ID of the service
      */
@@ -36,23 +36,22 @@ public class Service {
      */
     private List<Customer> customers = new ArrayList<Customer>();
 
-   
+
     /**
      * Services associated with a franchise
      */
     private Franchise fID;
-    
-    
+
+
     /**
      * Create a new service object.
+     *
      * @param name: Name of the service
-     * @param id:  Unique id of the service.
-     * @param fID:  Franchise that offers the service.
+     * @param id:   Unique id of the service.
      */
-    public Service(String name, int id,Franchise fID) {
+    public Service(String name, int id) {
         this.name = name;
         this.id = id;
-        this.fID = fID;
     }
 
     public Service() {
@@ -85,58 +84,59 @@ public class Service {
     public List<Customer> getCustomer() {
         return customers;
     }
-    
+
     public Franchise getFranchise() {
         return fID;
     }
-    
+
     public void setFranchise(Franchise fID) {
         this.fID = fID;
     }
 
-    public boolean checkFranchiselessthan500(Franchise fID){
-        boolean lessthan500 = false;
-        for(Service service: fID.getServices()){
-            int amountOfCustomers = service.getCustomer().size();
-            if(amountOfCustomers>500){
-                System.out.println("Capacity full for the service");
-                lessthan500 = true;
-            }
+    public boolean checkFranchiselessthan500(Customer customer) {
+        int maxAmountofCustomersinFranchise = 500;
+        boolean lessthan500 = true;
+        if (customer.getFranchise().getCustomer().size() > maxAmountofCustomersinFranchise) {
+            System.out.println("Capacity full for the franchise");
+            lessthan500 = false;
         }
 
         return lessthan500;
     }
-    public boolean checkServiceAmount(Customer customer){
-        boolean checkServiceUsed = customer.getNumberOfServices() >= 0 && customer.getNumberOfServices() <= 3;
-        if(!checkServiceUsed){
+
+    public boolean checkServiceAmount(Customer customer) {
+        boolean checkServiceUsed = true;
+        if (customer.getFranchise().getServices().size() > 3) {
+            checkServiceUsed = false;
             System.out.println("Incorrect amount of services used");
         }
         return checkServiceUsed;
     }
 
-    public  boolean checkServiceUnique(Customer customer){
+    public boolean checkDuplicateServices(Customer customer) throws Exception {
         boolean checkUnique = true;
-        try{
-            boolean noRepeatingServices = customer.getFranchise().getServices().stream().distinct().findAny().isPresent();
-            if(!noRepeatingServices){
-                checkUnique = false;
-                throw new Exception("service already existed");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
+
+        Set<String> uniqueNames = new HashSet<>();
+        for(Service service: customer.getFranchise().getServices()){
+            uniqueNames.add(service.getName());
         }
+        if(uniqueNames.size() != customer.getFranchise().getServices().size()){
+            checkUnique= false;
+            throw new Exception("Duplicate service");
+        }
+
         return checkUnique;
     }
 
     /**
      * Add a new customer to the service
-     * @param customer: who is requesting the service 
+     *
+     * @param customer: who is requesting the service
      * @return true if the customer is successfully enrolled, false otherwise
      */
 
-    public boolean addCustomerToService(Customer customer, Franchise fID) {
-        return checkFranchiselessthan500(fID) && checkServiceAmount(customer) && checkServiceUnique(customer);
+    public boolean addCustomerToService(Customer customer) throws Exception {
+        return checkFranchiselessthan500(customer) && checkServiceAmount(customer) && checkDuplicateServices(customer);
     }
-
 
 }

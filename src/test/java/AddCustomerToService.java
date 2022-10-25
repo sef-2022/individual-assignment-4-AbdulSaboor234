@@ -1,10 +1,13 @@
-import model.src.main.java.model.Customer;
-import model.src.main.java.model.Franchise;
-import model.src.main.java.model.Service;
+import model.Customer;
+import model.Franchise;
+import model.Service;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *  Implement and test {Service.addCustomerToService } that respects the following:
@@ -28,31 +31,113 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AddCustomerToService {
 
     Customer customer;
-    Service service;
+    Customer customer1;
+    Service service = new Service(); //initialized to be used to test service methods
+
     Franchise franchise;
+    ArrayList<Service> services = new ArrayList<>();
+    ArrayList<Customer> customers = new ArrayList<>();
+
+
+
+
+    /*setup creating the customers and adding services to the customer franchise*/
     @BeforeEach
     void setup(){
-        customer = new Customer("John Smith",1234,franchise);
-        customer.setNumberOfCourses(1);
-        service = new Service("cleaning",122,franchise);
-        service = new Service("clothing",222,franchise);
-        service = new Service("ppoo",123,franchise);
 
+        franchise = new Franchise(1,services,customers); //to intialize it
+        customer  = new Customer("John Smith",1234,franchise);
+        customer1 = new Customer("James m",256,franchise);
+        customers.add(customer);
+        customers.add(customer1);
+        services.add(new Service("Booking",123));
+        services.add(new Service("Cleaning",125));
+        services.add(new Service("Cooking",111));
 
     }
 
+
+
+    //checks the number of services used by the customer.
     @Test
-    void getNumberofServicesUsed(){
-        assertEquals(1,customer.getNumberOfServices());
+    void getNumberServicesUsed_equals0_ifNoServiceAdded(){
+        System.out.println("Number of services: "+ franchise.getServices().size());
     }
 
+
+    //checks if customers services are not null ie all customers have services in the franchise
     @Test
-    void checkUserNameisJohnSmith(){
-        assertEquals("John Smith", customer.getName());
+    void checkifCustomerisAddedtoService_showNull_ifServiceIsNotThere(){
+        //franchise.setServices(null); //uncomment to check if it is null
+        assertNotNull(franchise.getServices());
     }
 
 
+    //displays all customers related to a specific franchise.
+    @Test
+    void showAllCustomersRelatedToService(){
+        int numberOfCustomers = 0;
+    for(Service franchiseService: franchise.getServices()){
+        if (franchiseService.getName().equals("Cleaning")) { //checks customers related to the cleaning service
+            numberOfCustomers = franchise.getCustomer().size();
+        }
+    }
+        System.out.println("Number of customers: " + numberOfCustomers);
+    }
 
+
+    //checks for duplicate services and if they throw an exception
+    @Test
+    void checkForDuplicateService_throwException_IfDuplicateServiceFound() {
+        customer1.getFranchise().getServices().add(new Service("Booking",123)); //duplicate service added
+        Throwable throwable = Assertions.assertThrows(Exception.class,()->{
+            service.checkDuplicateServices(customer1);
+        });
+        Assertions.assertEquals("Duplicate service",throwable.getMessage());
+
+    }
+
+
+    //checks the number of services are less than 500
+    @Test
+    void checkNumberOfCustomersLessThan500_returnFalse_ifCustomersMoreThan500(){
+        int i = 0; //for the loop
+        while(franchise.getCustomer().size() <501){ //adds random 501 customers
+            franchise.getCustomer().add(new Customer(i+" Name",i,customer.getFranchise()));
+            i++;
+        }
+       Assertions.assertFalse(service.checkFranchiselessthan500(customer));
+    }
+
+
+    //checks if the amounts of service are less than 4
+    @Test
+    void checkIfTheNumberOfServiceIsLessThan4_returnFalse_ifServicesMoreThan4(){
+        int i = 0;
+        while(customer.getFranchise().getServices().size() <5){ //adds 4 service for the customer
+            customer.getFranchise().getServices().add(new Service(i+ " Name",i));
+            i++;
+        }
+        Assertions.assertFalse(service.checkServiceAmount(customer));
+    }
+
+    
+    //checks if the service can be added for a specific customer
+    @Test
+    void checkIfCustomerISAddedToTheService_returnFalse_IfCustomerIsNotAddedToTheService() throws Exception {
+        int i = 0;
+        int j =0;
+        while(customer.getFranchise().getServices().size() < 5){ //adds 4 service for the customer ie incorrect amount
+            customer.getFranchise().getServices().add(new Service(i+ " Name",i));
+            i++;
+        }
+        while(franchise.getCustomer().size() <501){ //adds random 501 customers ie too many customers
+            franchise.getCustomer().add(new Customer(j+" Name",j,customer.getFranchise()));
+            j++;
+        }
+        //checks if those criteria are not met.
+        Assertions.assertFalse(service.addCustomerToService(customer));
+    }
 
 
 }

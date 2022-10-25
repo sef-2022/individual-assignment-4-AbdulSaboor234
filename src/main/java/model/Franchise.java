@@ -20,11 +20,11 @@ public class Franchise {
      */
     private List<Customer> customers = new ArrayList<Customer>();
 
-   /* public Franchise(int ID, List<Service> services, List<Customer> customers) {
+    public Franchise(int ID, ArrayList<Service> services, ArrayList<Customer> customers) {
         this.ID = ID;
         this.services = services;
         this.customers = customers;
-    }*/
+    }
 
     public int getID() {
         return ID;

@@ -93,6 +93,9 @@ public class Service {
         this.fID = fID;
     }
 
+
+    //method that checks the size of the franchise and returns false if greater than 500
+
     public boolean checkFranchiselessthan500(Customer customer) {
         int maxAmountofCustomersinFranchise = 500;
         boolean lessthan500 = true;
@@ -104,23 +107,27 @@ public class Service {
         return lessthan500;
     }
 
+    //checks the amount of service present for a given customer
+
     public boolean checkServiceAmount(Customer customer) {
         boolean checkServiceUsed = true;
-        if (customer.getFranchise().getServices().size() > 3) {
+        if (customer.getFranchise().getServices().size() > 3) { //service cannot be greater than 3
             checkServiceUsed = false;
             System.out.println("Incorrect amount of services used");
         }
         return checkServiceUsed;
     }
 
+    //method that checks for duplicate services
     public boolean checkDuplicateServices(Customer customer) throws Exception {
         boolean checkUnique = true;
 
         Set<String> uniqueNames = new HashSet<>();
         for(Service service: customer.getFranchise().getServices()){
-            uniqueNames.add(service.getName());
+            uniqueNames.add(service.getName()); //sorts service by name for duplication
         }
         if(uniqueNames.size() != customer.getFranchise().getServices().size()){
+            //matches the set list to service list to see if there is duplicates as set removes duplicates
             checkUnique= false;
             throw new Exception("Duplicate service");
         }
@@ -136,7 +143,7 @@ public class Service {
      */
 
     public boolean addCustomerToService(Customer customer) throws Exception {
-        return checkFranchiselessthan500(customer) && checkServiceAmount(customer) && checkDuplicateServices(customer);
+        return checkDuplicateServices(customer) && checkFranchiselessthan500(customer) && checkServiceAmount(customer);
     }
 
 }
